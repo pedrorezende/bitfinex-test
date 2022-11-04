@@ -1,11 +1,15 @@
+import { OrderBookPrecision } from "models/OrderBook";
 import React from "react";
 
 export interface OrderBookControlsProps {
-  prop?: string;
+  precision: number;
 }
 
-export function OrderBookControls({
-  prop = "default value",
-}: OrderBookControlsProps) {
-  return <div>OrderBookControls {prop}</div>;
+export function OrderBookControls({ precision }: OrderBookControlsProps) {
+  return (
+    <div className="text-xs">
+      <button className="mr-2">decrease</button>
+      <button>increase</button>
+    </div>
+  );
 }
