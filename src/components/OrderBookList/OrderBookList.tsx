@@ -3,10 +3,15 @@ import { OrderBookMap } from "models/OrderBook";
 
 export interface OrderBookListProps {
   reversed?: boolean;
+  precision: number;
   data: OrderBookMap;
 }
 
-export function OrderBookList({ reversed, data }: OrderBookListProps) {
+export function OrderBookList({
+  reversed,
+  precision,
+  data,
+}: OrderBookListProps) {
   let gridClass = "flex justify-around";
   if (reversed) {
     gridClass += " flex-row-reverse";
@@ -23,10 +28,11 @@ export function OrderBookList({ reversed, data }: OrderBookListProps) {
 
       {Object.keys(data).map((entryId) => (
         <li
-          className={`py-1 text-gray-400 ${gridClass}`}
+          className={`py-1 text-gray-400 ${gridClass} hover:bg-bitfinex-blue-500 transition-background duration-100 ease-out`}
           key={`order-book-list-${entryId}`}
         >
           <OrderBookListEntry
+            precision={precision}
             count={data[entryId].count}
             amount={data[entryId].amount}
           />

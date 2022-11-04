@@ -12,6 +12,14 @@ export type StructuredOrderBook = {
   asks: OrderBookMap;
 };
 
+export const OrderBookPrecision = {
+  5: "P0",
+  4: "P1",
+  3: "P2",
+  2: "P3",
+  1: "P4",
+};
+
 export class OrderBookService {
   orderBook: OrderBookMap = {};
 
@@ -19,24 +27,25 @@ export class OrderBookService {
     data.map((order: OrderBookMessage) => {
       this.addEntry(order);
     });
-
-    console.log(this.orderBook);
   }
 
   public removeEntry(message: OrderBookMessage) {
     if (this.orderBook.hasOwnProperty(message[0])) {
-      delete this.orderBook[message[0]];
+      const { [message[0]]: value, ...newOrderBook } = this.orderBook;
+      this.orderBook = newOrderBook;
     }
   }
 
   public addEntry(message: OrderBookMessage) {
+    this.updateEntry(message);
+  }
+
+  public updateEntry(message: OrderBookMessage) {
     this.orderBook[message[0]] = {
       count: message[1],
       amount: message[2],
     };
   }
-
-  public updateEntry() {}
 
   public getOrderBook(): StructuredOrderBook {
     const output: StructuredOrderBook = { bids: {}, asks: {} };
@@ -52,5 +61,17 @@ export class OrderBookService {
     return output;
   }
 
-  public parseMessage(message: OrderBookMessage) {}
+  public parseMessage(message: OrderBookMessage): void {
+    if (!this.orderBook.hasOwnProperty(message[0]) && message[1] > 0) {
+      this.addEntry(message);
+      return;
+    }
+
+    if (message[1] === 0) {
+      this.removeEntry(message);
+      return;
+    }
+
+    this.updateEntry(message);
+  }
 }

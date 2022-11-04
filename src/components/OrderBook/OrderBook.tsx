@@ -1,16 +1,14 @@
 import { OrderBookControls } from "components/OrderBookControls";
 import { OrderBookList } from "components/OrderBookList";
 import { useOrderBook } from "hooks/useOrderBook";
-import React from "react";
+import { OrderBookPrecision } from "models/OrderBook";
+import { useState } from "react";
 import { selectBids, selectAsks } from "store/books";
 import { useAppSelector } from "store/hooks";
 
-export interface OrderBookProps {
-  prop?: string;
-}
-
-export function OrderBook({ prop = "default value" }: OrderBookProps) {
-  const orderBookActions = useOrderBook();
+export function OrderBook() {
+  const [precision, setPrecision] = useState<1 | 2 | 3 | 4 | 5>(5); // todo: look for a better way to declare this constant type
+  useOrderBook(OrderBookPrecision[precision]);
   const bids = useAppSelector(selectBids);
   const asks = useAppSelector(selectAsks);
 
@@ -25,8 +23,8 @@ export function OrderBook({ prop = "default value" }: OrderBookProps) {
       </header>
 
       <article className="grid grid-cols-2 px-4 grid-gap-1">
-        <OrderBookList data={bids} />
-        <OrderBookList data={asks} reversed />
+        <OrderBookList precision={precision} data={bids} />
+        <OrderBookList precision={precision} data={asks} reversed />
       </article>
     </section>
   );

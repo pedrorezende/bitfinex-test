@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import { createOrderBook, tickOrderBook } from "store/books";
 import { useAppDispatch } from "store/hooks";
@@ -13,11 +13,10 @@ function getSubscriptionMessage(precision: string): string {
   });
 }
 
-export const useOrderBook = () => {
+export const useOrderBook = (precision: string) => {
   // socketUrl should be placed in .env file. Using as constant just to make the process of
   // setting up the app easier.
   const socketUrl = "wss://api-pub.bitfinex.com/ws/2";
-  const [precision, setPrecision] = useState("P0");
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
   const dispatch = useAppDispatch();
 
@@ -38,8 +37,4 @@ export const useOrderBook = () => {
       }
     }
   }, [lastMessage, dispatch]);
-
-  return {
-    setPrecision,
-  };
 };
