@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
+import { createOrderBook, tickOrderBook } from "store/books";
+import { useAppDispatch } from "store/hooks";
 
 function getSubscriptionMessage(precision: string): string {
   return JSON.stringify({
@@ -17,19 +19,25 @@ export const useOrderBook = () => {
   const socketUrl = "wss://api-pub.bitfinex.com/ws/2";
   const [precision, setPrecision] = useState("P0");
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (readyState) {
-      console.log("sending message", getSubscriptionMessage(precision));
       sendMessage(getSubscriptionMessage(precision));
     }
   }, [readyState, precision, sendMessage]);
 
   useEffect(() => {
-    if (lastMessage !== null) {
-      console.log(lastMessage);
+    if (lastMessage !== null && lastMessage.data) {
+      console.log(lastMessage.data);
+      const data = JSON.parse(lastMessage.data);
+      if (data.length > 1 && data[1].length > 3) {
+        dispatch(createOrderBook(data[1]));
+      } else {
+        dispatch(tickOrderBook(data[1]));
+      }
     }
-  }, [lastMessage]);
+  }, [lastMessage, dispatch]);
 
   return {
     setPrecision,

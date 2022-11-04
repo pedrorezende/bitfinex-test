@@ -1,11 +1,19 @@
-import React from "react";
+import React, { memo } from "react";
 
 export interface OrderBookListEntryProps {
-  prop?: string;
+  amount: number;
+  count: number;
 }
 
-export function OrderBookListEntry({
-  prop = "default value",
-}: OrderBookListEntryProps) {
-  return <div>OrderBookListEntry {prop}</div>;
-}
+const _OrderBookListEntry = ({ count, amount }: OrderBookListEntryProps) => {
+  return (
+    <>
+      <span className="w-full">{count}</span>
+      <span className="w-full">{amount}</span>
+      <span className="w-full"></span>
+      <span className="w-full"></span>
+    </>
+  );
+};
+
+export const OrderBookListEntry = memo(_OrderBookListEntry);

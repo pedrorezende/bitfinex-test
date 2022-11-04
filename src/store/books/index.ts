@@ -1,29 +1,59 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  OrderBookService,
+  OrderBookMessage,
+  OrderBookMap,
+} from "models/OrderBook";
 import { RootState } from "..";
 
 export interface BookState {
   precision: number;
   status: "idle" | "connected" | "disconnected";
-  sell: [];
-  buy: [];
+  bids: OrderBookMap;
+  asks: OrderBookMap;
 }
 
 const initialState: BookState = {
   precision: 4,
   status: "idle",
-  sell: [],
-  buy: [],
+  bids: {},
+  asks: {},
 };
 
-export const counterSlice = createSlice({
-  name: "counter",
+let orderBook: OrderBookService;
+
+const updateStore = (state: any, orderBook: OrderBookService) => {
+  const updatedBook = orderBook.getOrderBook();
+  state.bids = updatedBook.bids;
+  state.asks = updatedBook.asks;
+};
+
+export const orderBookSlice = createSlice({
+  name: "orderBook",
   initialState,
   reducers: {
-    tick: (state, action: PayloadAction<number>) => {},
+    tickOrderBook: (state, action: PayloadAction<OrderBookMessage>) => {
+      if (orderBook) {
+        orderBook.parseMessage(action.payload);
+        updateStore(state, orderBook);
+      }
+    },
+
+    createOrderBook: (state, action: PayloadAction<OrderBookMessage[]>) => {
+      orderBook = new OrderBookService(action.payload);
+      updateStore(state, orderBook);
+    },
   },
 });
 
-export const { tick } = counterSlice.actions;
-export const selectCount = (state: RootState) => null;
+export const { tickOrderBook, createOrderBook } = orderBookSlice.actions;
 
-export default counterSlice.reducer;
+export const selectBids = (state: RootState) => {
+  return state.books.bids;
+};
+
+export const selectAsks = (state: RootState) => {
+  return state.books.asks;
+};
+
+export default orderBookSlice.reducer;

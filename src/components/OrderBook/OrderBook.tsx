@@ -2,6 +2,8 @@ import { OrderBookControls } from "components/OrderBookControls";
 import { OrderBookList } from "components/OrderBookList";
 import { useOrderBook } from "hooks/useOrderBook";
 import React from "react";
+import { selectBids, selectAsks } from "store/books";
+import { useAppSelector } from "store/hooks";
 
 export interface OrderBookProps {
   prop?: string;
@@ -9,6 +11,8 @@ export interface OrderBookProps {
 
 export function OrderBook({ prop = "default value" }: OrderBookProps) {
   const orderBookActions = useOrderBook();
+  const bids = useAppSelector(selectBids);
+  const asks = useAppSelector(selectAsks);
 
   return (
     <section className="container mt-8 rounded-sm bg-bitfinex-blue-700 text-bitfinex-blue-200">
@@ -21,8 +25,8 @@ export function OrderBook({ prop = "default value" }: OrderBookProps) {
       </header>
 
       <article className="grid grid-cols-2 px-4 grid-gap-1">
-        <OrderBookList />
-        <OrderBookList reversed />
+        <OrderBookList data={bids} />
+        <OrderBookList data={asks} reversed />
       </article>
     </section>
   );
