@@ -1,11 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "..";
 
-export interface BookState {}
+export interface BookState {
+  precision: number;
+  status: "idle" | "connected" | "disconnected";
+  sell: [];
+  buy: [];
+}
 
 const initialState: BookState = {
-  value: 0,
+  precision: 4,
   status: "idle",
+  sell: [],
+  buy: [],
 };
 
 export const counterSlice = createSlice({

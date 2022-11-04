@@ -5,5 +5,5 @@ export interface OrderBookProps {
 }
 
 export function OrderBook({ prop = "default value" }: OrderBookProps) {
-  return <div>OrderBook {prop}</div>;
+  return <div>Hello</div>;
 }

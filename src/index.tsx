@@ -1,4 +1,4 @@
-import { OrderBook } from "@components/OrderBook";
+import { OrderBook } from "components/OrderBook";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
